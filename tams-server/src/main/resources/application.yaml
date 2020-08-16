@@ -1,0 +1,22 @@
+server:
+  port: 12010
+
+spring:
+  profiles:
+    active: @profileActive@
+  jackson:
+    time-zone: GMT+8
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
+  type-aliases-package: com.lhd.tams.**.model
+
+logging:
+  config: classpath:log-logback.xml
+  custom:
+    path: ./logs

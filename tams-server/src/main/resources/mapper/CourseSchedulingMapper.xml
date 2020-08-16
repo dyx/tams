@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lhd.tams.module.coursescheduling.dao.CourseSchedulingMapper">
+
+    <sql id="column">
+               cs.id, cs.classroom_id classroomId, classroom.name classroomName,
+               cs.course_id courseId, course.name courseName, course.duration, course.background_color backgroundColor,
+               cs.teacher_id teacherId, teacher.name teacherName,
+               cs.date, cs.attend_time attendTime, cs.finish_time finishTime
+    </sql>
+
+    <select id="selectCourseSchedulingList" resultType="CourseSchedulingListVO">
+        select
+        <include refid="column"></include>
+        from t_course_scheduling cs
+        left join t_classroom classroom on cs.classroom_id = classroom.id
+        left join t_course course on cs.course_id = course.id
+        left join t_teacher teacher on cs.teacher_id = teacher.id
+        where 1=1
+        <if test="ew.sqlSegment != ''">
+            and ${ew.sqlSegment}
+        </if>
+    </select>
+
+    <select id="selectCourseSchedulingById" resultType="CourseSchedulingListVO">
+        select
+        <include refid="column"></include>
+        from t_course_scheduling cs
+        left join t_classroom classroom on cs.classroom_id = classroom.id
+        left join t_course course on cs.course_id = course.id
+        left join t_teacher teacher on cs.teacher_id = teacher.id
+        where cs.id = #{id}
+    </select>
+
+    <select id="selectCourseSchedulingCourseCount" resultType="map">
+        select date, count(id) count
+        from t_course_scheduling
+        where 1=1
+        <if test="ew.sqlSegment != ''">
+            and ${ew.sqlSegment}
+        </if>
+    </select>
+
+    <select id="selectTimePeriodByDateRange" resultType="string">
+        select concat(date_format(attend_time, '%H:%i'), '-', date_format(finish_time, '%H:%i')) time
+        from t_course_scheduling
+        where date in
+        <foreach item="item" collection="dateList" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        <if test="classroomId != null">
+            and classroom_id = #{classroomId}
+        </if>
+        group by time
+        order by time
+    </select>
+
+    <select id="selectByDateRange" resultType="CourseSchedulingExportVO">
+        select date,
+               concat(date_format(cs.attend_time, '%H:%i'), '-', date_format(cs.finish_time, '%H:%i')) time,
+               classroom.name classroomName,
+               course.name courseName, course.background_color backgroundColor,
+               teacher.name teacherName
+        from t_course_scheduling cs
+                 left join t_classroom classroom on cs.classroom_id = classroom.id
+                 left join t_course course on cs.course_id = course.id
+                 left join t_teacher teacher on cs.teacher_id = teacher.id
+        where date between #{startDate} and #{endDate}
+        <if test="classroomId != null">
+            and cs.classroom_id = #{classroomId}
+        </if>
+        order by date, time
+    </select>
+
+    <select id="selectReportTeacherCount" resultType="CourseSchedulingReportVO">
+        select teacher.id, teacher.name, count(cs.id) count
+        from t_teacher teacher
+        left join t_course_scheduling cs on teacher.id = cs.teacher_id
+            and cs.date between #{startDate} and #{endDate}
+        group by teacher.id, teacher.name
+        order by count desc;
+    </select>
+
+    <select id="selectReportCourseCount" resultType="CourseSchedulingReportVO">
+        select course.id, course.name, course.background_color color, count(cs.id) count
+        from t_course course
+        left join t_course_scheduling cs on course.id = cs.course_id
+            and cs.date between #{startDate} and #{endDate}
+        group by course.id, course.name
+        order by count desc;
+    </select>
+
+</mapper>

@@ -1,0 +1,15 @@
+
+spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://192.168.1.101:3306/tams?characterEncoding=utf-8&ti&useSSL=false
+      username: root
+      password: 123456
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      max-wait: 30000
+
+logging:
+  level:
+    com.lhd.tams: info

@@ -1,0 +1,43 @@
+version: '3'
+services:
+  tams_mysql:
+    image: mysql:5.7
+    container_name: tams_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: tams
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --default-time_zone='+8:00'
+    networks:
+      tams_net:
+        ipv4_address: 192.168.1.101
+    ports:
+      - 13306:3306
+    volumes:
+      - ~/tams/mysql/data:/var/lib/mysql
+      - ~/tams/mysql/conf:/etc/mysql/conf.d
+    restart: on-failure
+
+  tams_server:
+    build: .
+    image: tams_server
+    container_name: tams_server
+    depends_on:
+      - tams_mysql
+    networks:
+      tams_net:
+        ipv4_address: 192.168.1.100
+    ports:
+      - 12010:12010
+    volumes:
+      - ~/tams/logs:/logs
+    restart: on-failure
+
+networks:
+  tams_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.1.0/24"

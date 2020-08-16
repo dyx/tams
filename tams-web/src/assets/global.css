@@ -1,0 +1,35 @@
+body {
+    margin:0;
+    padding:0;
+}
+
+.tams-search-container {
+    padding-bottom: 10px;
+}
+.tams-search-container .tams-search-item {
+    width: 200px;
+    margin-right: 10px;
+}
+
+.tams-search-container .tams-operate-item {
+    float: right;
+}
+
+.tams-form-container .tams-form-item {
+    width: 250px;
+}
+
+/*重写element样式*/
+.el-card__header {
+    padding: 9px 10px;
+}
+
+.el-table td, .el-table th {
+    padding: 8px 0;
+    min-width: 0;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    position: relative;
+    text-align: left;
+}
