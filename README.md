@@ -3,19 +3,19 @@
 
 ## UI展示
 ### 排课
-![](./doc/img/周视图.png)
+![](./doc/img/week-view.png)
 
-![](./doc/img/月视图.png)
+![](./doc/img/month-view.png)
 
-![](./doc/img/批量排课.png)
+![](./doc/img/batch-scheduling-course.png)
 
-![](https://cdn.jsdelivr.net/gh/luhaidong/images@v1.1/tams/拖动修改.gif)
+![](./doc/img/drag-drop-edit.gif)
 ### 导出
-![](./doc/img/导出.png)
+![](./doc/img/export.png)
 
-![](./doc/img/Excel.png)
+![](./doc/img/excel.png)
 ### 报表统计
-![](./doc/img/报表.png)
+![](./doc/img/report.png)
 
 ## 技术栈
 ### 前端
