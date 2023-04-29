@@ -2,9 +2,13 @@ package com.lhd.tams.common.consts;
 
 /**
  * 停启用状态
+ * @author lhd
  */
 public enum EnableStateEnum {
 
+    /**
+     * 停启用状态
+     */
     DISABLED(2, "停用"),
     ENABLED(1, "启用");
 

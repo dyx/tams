@@ -1,13 +1,13 @@
 package com.lhd.tams.module.coursescheduling.manager;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.lhd.tams.common.consts.SheetNaingTypeEnum;
 import com.lhd.tams.common.exception.BusinessException;
-import com.lhd.tams.common.util.CollectionUtils;
 import com.lhd.tams.module.coursescheduling.dao.CourseSchedulingMapper;
 import com.lhd.tams.module.coursescheduling.model.dto.CourseSchedulingExportDTO;
 import com.lhd.tams.module.coursescheduling.model.vo.CourseSchedulingExportVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author lhd
+ */
 @Slf4j
 @Component
 public class CourseSchedulingExcelManager {
@@ -55,7 +58,7 @@ public class CourseSchedulingExcelManager {
         // 日期map <第几周, dateList>
         long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
         int week = 0;
-        Map<Integer, List<LocalDate>> dateMap = new HashMap<>();
+        Map<Integer, List<LocalDate>> dateMap = new HashMap<>(16);
         for (int i = 0; i < days; i++) {
             LocalDate date = startDate.plusDays(i);
             boolean isWeek = date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY;
@@ -75,14 +78,14 @@ public class CourseSchedulingExcelManager {
         }
 
         // 时间map <第几周, timeList>
-        Map<Integer, List<String>> timeMap = new HashMap<>();
+        Map<Integer, List<String>> timeMap = new HashMap<>(16);
         for (Map.Entry<Integer, List<LocalDate>> entry : dateMap.entrySet()) {
             timeMap.put(entry.getKey(), courseSchedulingMapper.selectTimePeriodByDateRange(entry.getValue(), dto.getClassroomId()));
         }
 
         // 课程map <date+time, course>
         List<CourseSchedulingExportVO> voList = courseSchedulingMapper.selectByDateRange(startDate, endDate, dto.getClassroomId());
-        Map<String, CourseSchedulingExportVO> dataMap = new HashMap<>();
+        Map<String, CourseSchedulingExportVO> dataMap = new HashMap<>(16);
         for (CourseSchedulingExportVO vo : voList) {
             dataMap.put(vo.getDate() + vo.getTime(), vo);
         }
@@ -121,7 +124,7 @@ public class CourseSchedulingExcelManager {
                                     List<LocalDate> dateList, List<String> timeList, Map<String, CourseSchedulingExportVO> dataMap,
                                     String sheetName, String title, String subtitleClassroomName) {
 
-        if (workbook == null || CollectionUtils.isAnyEmpty(dateList, timeList) || CollectionUtils.isEmpty(dataMap)) {
+        if (workbook == null || CollUtil.isEmpty(dateList) || CollUtil.isEmpty(timeList) || CollUtil.isEmpty(dataMap)) {
             return;
         }
 
@@ -133,7 +136,7 @@ public class CourseSchedulingExcelManager {
         int dataRowIndex = 0;
         int classroomRowIndex = 0;
         int dateColumnNum = dateList.size();
-        if (StringUtils.isNotEmpty(title)) {
+        if (StrUtil.isNotEmpty(title)) {
             createTitleRow(sheet, 0, dateColumnNum + 1, title);
 
             dateRowIndex ++;
@@ -141,7 +144,7 @@ public class CourseSchedulingExcelManager {
             classroomRowIndex ++;
         }
 
-        if (StringUtils.isNotEmpty(subtitleClassroomName)) {
+        if (StrUtil.isNotEmpty(subtitleClassroomName)) {
             createClassroomRow(sheet, classroomRowIndex, dateColumnNum + 1, "教室：" + subtitleClassroomName);
 
             dateRowIndex ++;
@@ -179,7 +182,7 @@ public class CourseSchedulingExcelManager {
 
                 CourseSchedulingExportVO vo = dataMap.get(dateList.get(j) + time);
                 if (vo != null) {
-                    createDataCell(courseRow, j + 1, vo, StringUtils.isEmpty(subtitleClassroomName));
+                    createDataCell(courseRow, j + 1, vo, StrUtil.isEmpty(subtitleClassroomName));
                 }
             }
         }
@@ -262,7 +265,7 @@ public class CourseSchedulingExcelManager {
             cellStyle.setAlignment(HorizontalAlignment.CENTER);
             cellStyle.setWrapText(true);
 
-            if (StringUtils.isNotEmpty(vo.getBackgroundColor())) {
+            if (StrUtil.isNotEmpty(vo.getBackgroundColor())) {
                 XSSFColor xssfColor = new XSSFColor(java.awt.Color.decode(vo.getBackgroundColor()) , new DefaultIndexedColorMap());
                 cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
                 ((XSSFCellStyle) cellStyle).setFillForegroundColor(xssfColor);
@@ -290,8 +293,6 @@ public class CourseSchedulingExcelManager {
             cell.setCellStyle(cellStyle);
             cell.setCellValue(richTextString);
         }
-
-
     }
 
     private static void setBorderStyle(CellStyle style, BorderStyle borderStyle, IndexedColors borderColor) {

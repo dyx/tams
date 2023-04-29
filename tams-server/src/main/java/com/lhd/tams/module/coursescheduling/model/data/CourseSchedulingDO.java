@@ -8,6 +8,9 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * @author lhd
+ */
 @Data
 @TableName("t_course_scheduling")
 public class CourseSchedulingDO {

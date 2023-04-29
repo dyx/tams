@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author lhd
+ */
 @Service
 public class ColorServiceImpl extends ServiceImpl<ColorMapper, ColorDO> implements ColorService {
 

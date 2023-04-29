@@ -1,33 +1,35 @@
 package com.lhd.tams.module.coursescheduling.model.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
 
+/**
+ * @author lhd
+ */
 @Data
-@ApiModel(value = "排课查询参数")
+@Schema(description = "排课查询参数")
 public class CourseSchedulingQuery {
 
-    @ApiModelProperty(value = "教室id列表")
+    @Schema(description = "教室id列表")
     private List<Long> classroomIdList;
 
-    @ApiModelProperty(value = "课程id列表")
+    @Schema(description = "课程id列表")
     private List<Long> courseIdList;
 
-    @ApiModelProperty(value = "老师id列表")
+    @Schema(description = "老师id列表")
     private List<Long> teacherIdList;
 
-    @ApiModelProperty(value = "开始日期")
+    @Schema(description = "开始日期")
     private String startDate;
 
-    @ApiModelProperty(value = "结束日期")
+    @Schema(description = "结束日期")
     private String endDate;
 
-    @ApiModelProperty(value = "上课时间")
+    @Schema(description = "上课时间")
     private String attendTime;
 
-    @ApiModelProperty(value = "下课时间")
+    @Schema(description = "下课时间")
     private String finishTime;
 }

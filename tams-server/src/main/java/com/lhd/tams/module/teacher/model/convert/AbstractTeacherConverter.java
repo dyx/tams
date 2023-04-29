@@ -10,17 +10,40 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
+/**
+ * @author lhd
+ */
 @Mapper
 public abstract class AbstractTeacherConverter {
 
     public static AbstractTeacherConverter INSTANCE = Mappers.getMapper(AbstractTeacherConverter.class);
 
+    /**
+     * doPage2ListVoPage
+     * @param doPage
+     * @return
+     */
     public abstract Page<TeacherListVO> doPage2ListVoPage(IPage<TeacherDO> doPage);
 
+    /**
+     * doList2ListVoList
+     * @param doList
+     * @return
+     */
     public abstract List<TeacherListVO> doList2ListVoList(List<TeacherDO> doList);
 
+    /**
+     * do2ListVO
+     * @param dataObj
+     * @return
+     */
     public abstract TeacherListVO do2ListVO(TeacherDO dataObj);
 
+    /**
+     * saveDto2DO
+     * @param saveDTO
+     * @return
+     */
     public abstract TeacherDO saveDto2DO(TeacherSaveDTO saveDTO);
 
 }

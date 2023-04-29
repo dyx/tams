@@ -4,6 +4,7 @@ package com.lhd.tams.common.consts;
  * 详细错误码
  * 起始值1000，每100个为一类
  * 命名：类别_具体描述
+ * @author lhd
  */
 public enum ErrorCodeEnum {
 

@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author lhd
+ */
 @Service
 public class CourseServiceImpl extends ServiceImpl<CourseMapper, CourseDO> implements CourseService {
 

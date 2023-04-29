@@ -1,26 +1,28 @@
 package com.lhd.tams.module.coursescheduling.model.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@ApiModel(value = "排课时间修改参数")
+/**
+ * @author lhd
+ */
+@Schema(description = "排课时间修改参数")
 @Data
 public class CourseSchedulingTimeUpdateDTO {
 
     @NotNull
-    @ApiModelProperty(value = "日期")
+    @Schema(description = "日期")
     private LocalDate date;
 
     @NotNull
-    @ApiModelProperty(value = "上课时间")
+    @Schema(description = "上课时间")
     private LocalTime attendTime;
 
     @NotNull
-    @ApiModelProperty(value = "下课时间")
+    @Schema(description = "下课时间")
     private LocalTime finishTime;
 }

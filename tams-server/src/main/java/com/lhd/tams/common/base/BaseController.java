@@ -4,6 +4,9 @@ import com.lhd.tams.common.model.ApiResult;
 import com.lhd.tams.common.util.ResponseEntityUtils;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * @author lhd
+ */
 public class BaseController {
 
     protected static ResponseEntity<ApiResult<?>> success() {

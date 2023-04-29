@@ -1,14 +1,16 @@
 package com.lhd.tams.module.classroom.model.dto;
 
 import com.lhd.tams.common.model.BasePageQuery;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-@ApiModel(value = "教室分页查询参数")
+/**
+ * @author lhd
+ */
+@Schema(description = "教室分页查询参数")
 @Data
 public class ClassroomPageQuery extends BasePageQuery {
 
-    @ApiModelProperty(value = "停启用状态")
+    @Schema(description = "停启用状态")
     private Integer enableState;
 }

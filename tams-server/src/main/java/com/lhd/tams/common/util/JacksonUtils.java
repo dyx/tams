@@ -13,7 +13,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.lhd.tams.common.consts.CommonConsts;
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +95,7 @@ public class JacksonUtils {
      */
     public static <T> T toObj(String str, Class<T> clazz) {
 
-        if (StringUtils.isEmpty(str) || clazz == null) {
+        if (StrUtil.isEmpty(str) || clazz == null) {
             return null;
         }
 
@@ -111,7 +111,7 @@ public class JacksonUtils {
 
     public static <T> T toObj(String str, TypeReference<T> typeReference) {
 
-        if (StringUtils.isEmpty(str) || typeReference == null) {
+        if (StrUtil.isEmpty(str) || typeReference == null) {
             return null;
         }
 

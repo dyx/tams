@@ -1,5 +1,9 @@
 package com.lhd.tams.common.model;
 
+/**
+ * 基础分页查询参数
+ * @author lhd
+ */
 public class BasePageQuery {
 
     private final static int MAX_SIZE = 100;

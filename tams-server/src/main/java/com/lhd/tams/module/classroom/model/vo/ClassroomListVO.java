@@ -1,19 +1,21 @@
 package com.lhd.tams.module.classroom.model.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-@ApiModel(value = "教室列表返回结果")
+/**
+ * @author lhd
+ */
+@Schema(description = "教室列表返回结果")
 @Data
 public class ClassroomListVO {
 
-    @ApiModelProperty(value = "id")
+    @Schema(description = "id")
     private Long id;
 
-    @ApiModelProperty(value = "名称")
+    @Schema(description = "名称")
     private String name;
 
-    @ApiModelProperty(value = "停启用状态")
+    @Schema(description = "停启用状态")
     private Integer enableState;
 }

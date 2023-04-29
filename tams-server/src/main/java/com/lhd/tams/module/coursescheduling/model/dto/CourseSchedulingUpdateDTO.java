@@ -1,24 +1,25 @@
 package com.lhd.tams.module.coursescheduling.model.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
-@ApiModel(value = "排课修改参数")
+/**
+ * @author lhd
+ */
+@Schema(description = "排课修改参数")
 @Data
 public class CourseSchedulingUpdateDTO {
 
     @NotNull
-    @ApiModelProperty(value = "教室id")
+    @Schema(description = "教室id")
     private Long classroomId;
 
     @NotNull
-    @ApiModelProperty(value = "课程id")
+    @Schema(description = "课程id")
     private Long courseId;
 
     @NotNull
-    @ApiModelProperty(value = "老师id")
+    @Schema(description = "老师id")
     private Long teacherId;
 }

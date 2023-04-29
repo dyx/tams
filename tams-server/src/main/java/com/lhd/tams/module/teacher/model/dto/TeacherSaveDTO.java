@@ -1,13 +1,15 @@
 package com.lhd.tams.module.teacher.model.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-@ApiModel(value = "教师分页查询参数")
+/**
+ * @author lhd
+ */
+@Schema(description = "教师分页查询参数")
 @Data
 public class TeacherSaveDTO {
 
-    @ApiModelProperty(value = "姓名")
+    @Schema(description = "姓名")
     private String name;
 }

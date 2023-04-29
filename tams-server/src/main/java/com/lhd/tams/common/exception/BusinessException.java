@@ -4,6 +4,7 @@ import com.lhd.tams.common.consts.ErrorCodeEnum;
 
 /**
  * 业务异常
+ * @author lhd
  */
 public class BusinessException extends RuntimeException {
 

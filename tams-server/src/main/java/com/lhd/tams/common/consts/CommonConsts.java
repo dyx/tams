@@ -2,6 +2,7 @@ package com.lhd.tams.common.consts;
 
 /**
  * 通用常量
+ * @author lhd
  */
 public class CommonConsts {
 

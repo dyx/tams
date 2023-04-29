@@ -2,6 +2,8 @@ server:
   port: 12010
 
 spring:
+  application:
+    name: tams
   profiles:
     active: @profileActive@
   jackson:
@@ -16,7 +18,5 @@ mybatis-plus:
     banner: false
   type-aliases-package: com.lhd.tams.**.model
 
-logging:
-  config: classpath:log-logback.xml
-  custom:
-    path: ./logs
+
+

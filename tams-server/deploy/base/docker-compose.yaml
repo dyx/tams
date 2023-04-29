@@ -1,0 +1,64 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0
+    container_name: tams-mysql
+    environment:
+      # https://dev.mysql.com/doc/refman/8.0/en/docker-mysql-more-topics.html
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: tams
+      MYSQL_ROOT_HOST: '%'
+      TZ: Asia/Shanghai
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --default-time_zone='+8:00'
+      --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      --log_timestamps=SYSTEM
+    networks:
+      tams-net:
+        ipv4_address: 192.168.1.100
+    ports:
+      - 13306:3306
+    volumes:
+      - /home/tams/mysql/data:/var/lib/mysql
+      - /home/tams/mysql/conf:/etc/mysql/conf.d
+      - /home/tams/mysql/init:/docker-entrypoint-initdb.d/
+    restart: on-failure
+
+  backend:
+    build: .
+    image: tams-server
+    container_name: tams-server
+    depends_on:
+      - db
+    networks:
+      tams-net:
+        ipv4_address: 192.168.1.150
+    ports:
+      - 12010:12010
+    volumes:
+      - /home/tams/logs:/logs/tams/logs
+    restart: on-failure
+
+  frontend:
+    image: nginx:1.24
+    container_name: tams-web
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      tams-net:
+        ipv4_address: 192.168.1.200
+    ports:
+      - "12011:80"
+    volumes:
+      - /home/tams/nginx/conf.d:/etc/nginx/conf.d
+      - /home/tams/nginx/html:/usr/share/nginx/html:ro
+    restart: on-failure
+
+networks:
+  tams-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.1.0/24"

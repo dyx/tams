@@ -16,7 +16,7 @@ import com.lhd.tams.module.coursescheduling.model.vo.CourseSchedulingListVO;
 import com.lhd.tams.module.coursescheduling.model.vo.CourseSchedulingReportVO;
 import com.lhd.tams.module.coursescheduling.service.CourseSchedulingService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,6 +24,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * @author lhd
+ */
 @Slf4j
 @Service
 public class CourseSchedulingServiceImpl extends ServiceImpl<CourseSchedulingMapper, CourseSchedulingDO> implements CourseSchedulingService {
@@ -35,10 +38,10 @@ public class CourseSchedulingServiceImpl extends ServiceImpl<CourseSchedulingMap
                 .in(query.getClassroomIdList() != null && query.getClassroomIdList().size() > 0, "cs.classroom_id", query.getClassroomIdList())
                 .in(query.getCourseIdList() != null && query.getCourseIdList().size() > 0, "cs.course_id", query.getCourseIdList())
                 .in(query.getTeacherIdList() != null && query.getTeacherIdList().size() > 0, "cs.teacher_id", query.getTeacherIdList())
-                .ge(StringUtils.isNotEmpty(query.getStartDate()), "cs.date", query.getStartDate())
-                .le(StringUtils.isNotEmpty(query.getEndDate()), "cs.date", query.getEndDate())
-                .eq(StringUtils.isNotEmpty(query.getAttendTime()), "cs.attend_time", query.getAttendTime())
-                .eq(StringUtils.isNotEmpty(query.getFinishTime()), "cs.finish_time", query.getFinishTime());
+                .ge(StrUtil.isNotEmpty(query.getStartDate()), "cs.date", query.getStartDate())
+                .le(StrUtil.isNotEmpty(query.getEndDate()), "cs.date", query.getEndDate())
+                .eq(StrUtil.isNotEmpty(query.getAttendTime()), "cs.attend_time", query.getAttendTime())
+                .eq(StrUtil.isNotEmpty(query.getFinishTime()), "cs.finish_time", query.getFinishTime());
 
         return baseMapper.selectCourseSchedulingList(queryWrapper);
     }
@@ -52,14 +55,14 @@ public class CourseSchedulingServiceImpl extends ServiceImpl<CourseSchedulingMap
     @Override
     public Map<String, Integer> getCourseSchedulingCourseCount(CourseSchedulingQuery query) {
 
-        Map<String, Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<>(16);
 
         QueryWrapper<CourseSchedulingDO> queryWrapper = Wrappers.<CourseSchedulingDO>query()
                 .in(query.getClassroomIdList() != null && query.getClassroomIdList().size() > 0, "classroom_id", query.getClassroomIdList())
                 .in(query.getCourseIdList() != null && query.getCourseIdList().size() > 0, "course_id", query.getCourseIdList())
                 .in(query.getTeacherIdList() != null && query.getTeacherIdList().size() > 0, "teacher_id", query.getTeacherIdList())
-                .ge(StringUtils.isNotEmpty(query.getStartDate()), "date", query.getStartDate())
-                .le(StringUtils.isNotEmpty(query.getEndDate()), "date", query.getEndDate())
+                .ge(StrUtil.isNotEmpty(query.getStartDate()), "date", query.getStartDate())
+                .le(StrUtil.isNotEmpty(query.getEndDate()), "date", query.getEndDate())
                 .groupBy("date")
                 .orderByAsc("date");;
         List<Map<String, String>> list = baseMapper.selectCourseSchedulingCourseCount(queryWrapper);

@@ -1,19 +1,22 @@
 package com.lhd.tams.module.course.model.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-@ApiModel(value = "课程新增参数")
+/**
+ * @author lhd
+ */
+@Schema(description = "课程新增参数")
 @Data
 public class CourseSaveDTO {
 
-    @ApiModelProperty(value = "名称")
+    @Schema(description = "名称")
     private String name;
 
-    @ApiModelProperty(value = "课程时长，单位分钟")
+    @Schema(description = "课程时长，单位分钟")
     private Integer duration;
 
-    @ApiModelProperty(value = "背景颜色")
+    @Schema(description = "背景颜色")
     private String backgroundColor;
 }

@@ -1,5 +1,4 @@
 ### IntelliJ IDEA ###
 .idea
-*.iws
-*.iml
-*.ipr
+logs
+path_IS_UNDEFINED

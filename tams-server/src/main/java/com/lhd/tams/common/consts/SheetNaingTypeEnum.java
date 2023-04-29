@@ -2,9 +2,13 @@ package com.lhd.tams.common.consts;
 
 /**
  * sheet命名方式
+ * @author lhd
  */
 public enum SheetNaingTypeEnum {
 
+    /**
+     * sheet命名方式
+     */
     WEEK_NUM(2, "第几周"),
     TIME_PERIOD(1, "时间段");
 
