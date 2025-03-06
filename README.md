@@ -154,55 +154,36 @@ yum install -y unzip
 - [SpringFox迁移至SpringDoc](https://springdoc.org/v2/#migrating-from-springfox)
 
 > MacOS切换Java版本
-1. 新建`switch_java.sh`脚本文件
-```bash
-#!/bin/bash
 
-# 打印已安装的Java版本
-echo "已安装的Java版本："
+推荐使用Java环境管理器Jenv https://github.com/jenv/jenv
+1. 安装
+```bash
+# 安装
+brew install jenv
+
+# 配置环境变量
+echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(jenv init -)"' >> ~/.zshrc
+source ~/.zshrc
+```
+2. 使用
+```bash
+# 先查看java的安装目录
 /usr/libexec/java_home -V
 
-# 选择要切换的Java版本
-read -p "请输入要切换的Java版本（如 1.8、11 或 17）: " java_version
+# 添加jdk
+jenv add [java_home]
 
-# 获取要切换的Java版本的路径
-java_home=$(/usr/libexec/java_home -v $java_version)
+# 查看已安装版本
+jenv versions
 
-# 检查是否成功获取Java路径
-if [ $? -ne 0 ]; then
-    echo "未找到指定的Java版本，请检查输入是否正确。"
-    exit 1
-fi
+# 设置全局jdk版本
+jenv global 17
 
-# 更新环境变量
-export JAVA_HOME=$java_home
-export PATH=$JAVA_HOME/bin:$PATH
-
-# 检查切换是否成功
-echo "切换后的Java版本："
+# 查看当前jdk版本
 java -version
 
-# 使更改永久生效（可选）
-read -p "是否要使更改永久生效？(y/n): " permanent_change
-
-if [ "$permanent_change" = "y" ] || [ "$permanent_change" = "Y" ]; then
-    # 删除旧的export语句
-    sed -i '' '/^export JAVA_HOME=.*$/d' ~/.bash_profile
-    sed -i '' '/^export PATH=.*JAVA_HOME.*$/d' ~/.bash_profile
-
-    # 添加新的export语句
-    echo "export JAVA_HOME=$java_home" >> ~/.bash_profile
-    echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> ~/.bash_profile
-    echo "更改已永久生效，请重新打开终端以查看效果。"
-fi
-```
-2. 设置可全局执行
-```
-mv switch_java.sh /usr/local/bin
-chmod +x /usr/local/bin/switch_java.sh
-```
-3. 执行脚本
-```
-switch_java.sh
+# 如果没有设置成功，执行下面命令
+source ~/.zshrc
 ```
 
