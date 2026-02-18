@@ -1,0 +1,5 @@
+export const CONSTS = {
+    PAGE_SIZES: [10, 30, 50, 100] as const,
+    COURSE_DURATION_STEP_MINUTE: 15,
+    SELF_HANDLE_ERROR_CODE: [100001]
+}

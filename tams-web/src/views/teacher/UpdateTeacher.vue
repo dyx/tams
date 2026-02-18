@@ -1,92 +1,49 @@
 <template>
-  <el-dialog title="编辑" width="450px"
-             :close-on-click-modal="false"
-             :close-on-press-escape="false"
-             :visible.sync="dialogVisible"
-             :before-close="handleClose" >
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px" class="tams-form-container">
-      <el-form-item label="名称" prop="name">
-        <el-input v-model="form.name" class="tams-form-item"></el-input>
+  <el-dialog title="修改" width="400px" :close-on-click-modal="false" :close-on-press-escape="false" v-model="dialogVisible" :before-close="handleClose">
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" class="tams-form-container">
+      <el-form-item label="姓名" prop="name">
+        <el-input v-model="form.name" class="tams-form-item" />
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="close">取消</el-button>
-      <el-button type="primary" :loading="submitBtnLoading" @click="submit">确定</el-button>
-    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="close">取消</el-button>
+        <el-button type="primary" :loading="submitBtnLoading" @click="submit">确定</el-button>
+      </div>
+    </template>
   </el-dialog>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
+import { useTeacherStore } from '@/stores/teacher'
 
-export default {
-  name: 'UpdateTeacher',
-  props: {
-    visible: {
-      type: Boolean
-    },
-    id: {
-      type: String,
-      default: ''
-    }
-  },
-  data () {
-    return {
-      dialogVisible: false,
-      form: {},
-      rules: {
-        name: [
-          {
-            required: true,
-            message: '姓名不能为空',
-            trigger: 'blur'
-          }
-        ]
-      },
-      submitBtnLoading: false
-    }
-  },
-  methods: {
-    ...mapActions(['GetTeacherById', 'UpdateTeacherById']),
-    handleClose (done) {
-      this.$refs.form.resetFields()
-      this.$emit('on-close')
-      done()
-    },
-    close () {
-      this.$refs.form.resetFields()
-      this.$emit('on-close')
-      this.dialogVisible = false
-    },
-    search () {
-      this.GetTeacherById(this.id).then(res => {
-        this.form = res
-      }).catch(() => {
-      })
-    },
-    submit () {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          this.submitBtnLoading = true
-          this.UpdateTeacherById({ id: this.id, data: this.form }).then(() => {
-            this.submitBtnLoading = false
-            this.$refs.form.resetFields()
-            this.$emit('on-success')
-            this.dialogVisible = false
-          }).catch(() => {
-            this.submitBtnLoading = false
-          })
-        }
-      })
-    }
-  },
-  watch: {
-    visible (val) {
-      if (val) {
-        this.dialogVisible = val
-        this.search()
-      }
-    }
-  }
+const props = defineProps<{ visible: boolean; id: number | string }>()
+const emit = defineEmits<{ 'on-close': []; 'on-success': [] }>()
+
+const teacherStore = useTeacherStore()
+const dialogVisible = ref(false)
+const formRef = ref<FormInstance>()
+const form = ref<any>({})
+const submitBtnLoading = ref(false)
+const rules: FormRules = { name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }] }
+
+const search = () => {
+  teacherStore.getTeacherById(Number(props.id)).then((res: any) => { if (res) form.value = res }).catch(() => {})
 }
+const resetData = () => { formRef.value?.resetFields(); form.value = {} }
+const handleClose = (done: () => void) => { resetData(); emit('on-close'); done() }
+const close = () => { resetData(); emit('on-close'); dialogVisible.value = false }
+const submit = () => {
+  formRef.value?.validate((valid) => {
+    if (valid) {
+      submitBtnLoading.value = true
+      teacherStore.updateTeacherById(Number(props.id), form.value).then(() => {
+        submitBtnLoading.value = false; resetData(); emit('on-success'); dialogVisible.value = false
+      }).catch(() => { submitBtnLoading.value = false })
+    }
+  })
+}
+watch(() => props.visible, (val) => { if (val) { search(); dialogVisible.value = val } })
 </script>

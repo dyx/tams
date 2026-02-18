@@ -1,108 +1,69 @@
 <template>
-  <el-dialog title="编辑" width="450px"
-             :close-on-click-modal="false"
-             :close-on-press-escape="false"
-             :visible.sync="dialogVisible"
-             :before-close="handleClose" >
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px" class="tams-form-container">
+  <el-dialog title="修改" width="400px" :close-on-click-modal="false" :close-on-press-escape="false" v-model="dialogVisible" :before-close="handleClose">
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="tams-form-container">
       <el-form-item label="名称" prop="name">
-        <el-input v-model="form.name" class="tams-form-item"></el-input>
+        <el-input v-model="form.name" class="tams-form-item" />
       </el-form-item>
-      <el-form-item label="课程时长" prop="duration">
-        <el-input-number v-model="form.duration" :step="$consts.COURSE_DURATION_STEP_MINUTE" :min="0" :max="360" class="tams-form-item"></el-input-number>
+      <el-form-item label="时长(分钟)" prop="duration">
+        <el-input-number v-model="form.duration" class="tams-form-item" :step="CONSTS.COURSE_DURATION_STEP_MINUTE" :min="0" :max="360" />
       </el-form-item>
       <el-form-item label="背景颜色" prop="backgroundColor">
-        <el-color-picker v-model="form.backgroundColor" :predefine="predefineColors">
-        </el-color-picker>
+        <el-select v-model="form.backgroundColor" class="tams-form-item">
+          <el-option v-for="item in colorData" :key="item.color" :label="item.name" :value="item.color">
+            <span :style="{ float: 'left', backgroundColor: item.color, width: '20px', height: '20px', borderRadius: '3px', marginRight: '8px', verticalAlign: 'middle' }" />
+            <span>{{ item.name }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="close">取消</el-button>
-      <el-button type="primary" :loading="submitBtnLoading" @click="submit">确定</el-button>
-    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="close">取消</el-button>
+        <el-button type="primary" :loading="submitBtnLoading" @click="submit">确定</el-button>
+      </div>
+    </template>
   </el-dialog>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
+import { useCourseStore } from '@/stores/course'
+import { useColorStore } from '@/stores/color'
+import { CONSTS } from '@/utils/consts'
 
-export default {
-  name: 'UpdateCourse',
-  props: {
-    visible: {
-      type: Boolean
-    },
-    id: {
-      type: String,
-      default: ''
-    }
-  },
-  data () {
-    return {
-      dialogVisible: false,
-      form: {},
-      predefineColors: [],
-      rules: {
-        name: [
-          {
-            required: true,
-            message: '名称不能为空',
-            trigger: 'blur'
-          }
-        ]
-      },
-      submitBtnLoading: false
-    }
-  },
-  methods: {
-    ...mapActions(['GetCourseById', 'UpdateCourseById', 'GetEffectiveList']),
-    init () {
-      this.GetEffectiveList().then((res) => {
-        this.predefineColors = res
-      }).catch(() => {
-      })
-    },
-    handleClose (done) {
-      this.$refs.form.resetFields()
-      this.$emit('on-close')
-      done()
-    },
-    close () {
-      this.$refs.form.resetFields()
-      this.$emit('on-close')
-      this.dialogVisible = false
-    },
-    search () {
-      this.GetCourseById(this.id).then(res => {
-        this.form = res
-      }).catch(() => {
-      })
-    },
-    submit () {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          this.form.backgroundColor = this.form.backgroundColor === null ? '' : this.form.backgroundColor
-          this.submitBtnLoading = true
-          this.UpdateCourseById({ id: this.id, data: this.form }).then(() => {
-            this.submitBtnLoading = false
-            this.$refs.form.resetFields()
-            this.$emit('on-success')
-            this.dialogVisible = false
-          }).catch(() => {
-            this.submitBtnLoading = false
-          })
-        }
-      })
-    }
-  },
-  watch: {
-    visible (val) {
-      if (val) {
-        this.dialogVisible = val
-        this.init()
-        this.search()
-      }
-    }
-  }
+const props = defineProps<{ visible: boolean; id: number | string }>()
+const emit = defineEmits<{ 'on-close': []; 'on-success': [] }>()
+
+const courseStore = useCourseStore()
+const colorStore = useColorStore()
+const dialogVisible = ref(false)
+const formRef = ref<FormInstance>()
+const form = ref<any>({})
+const colorData = ref<any[]>([])
+const submitBtnLoading = ref(false)
+
+const rules: FormRules = {
+  name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+  duration: [{ required: true, message: '时长不能为空', trigger: 'blur' }]
 }
+
+const init = () => {
+  colorStore.getColorList().then((res: any) => { if (res) colorData.value = res }).catch(() => {})
+  courseStore.getCourseById(Number(props.id)).then((res: any) => { if (res) form.value = res }).catch(() => {})
+}
+const resetData = () => { formRef.value?.resetFields(); form.value = {}; colorData.value = [] }
+const handleClose = (done: () => void) => { resetData(); emit('on-close'); done() }
+const close = () => { resetData(); emit('on-close'); dialogVisible.value = false }
+const submit = () => {
+  formRef.value?.validate((valid) => {
+    if (valid) {
+      submitBtnLoading.value = true
+      courseStore.updateCourseById(Number(props.id), form.value).then(() => {
+        submitBtnLoading.value = false; resetData(); emit('on-success'); dialogVisible.value = false
+      }).catch(() => { submitBtnLoading.value = false })
+    }
+  })
+}
+watch(() => props.visible, (val) => { if (val) { init(); dialogVisible.value = val } })
 </script>

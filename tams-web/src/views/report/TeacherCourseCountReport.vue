@@ -1,101 +1,79 @@
 <template>
   <el-row>
-    <el-col :style="{width: 'calc(100% - '+width+')'}">
+    <el-col :style="{ width: 'calc(100% - ' + width + ')' }">
       <el-table stripe border :data="data">
-        <el-table-column type="index" label="序号" width="50"></el-table-column>
-        <el-table-column prop="name" label="老师姓名" width="200"></el-table-column>
-        <el-table-column prop="count" label="课程数量"></el-table-column>
+        <el-table-column type="index" label="序号" width="50" />
+        <el-table-column prop="name" label="老师姓名" width="200" />
+        <el-table-column prop="count" label="课时数量" />
       </el-table>
     </el-col>
-    <el-col :style="{width: width}">
-      <div id="teacherCourseCountChart" :style="{width: width, height: '600px'}"></div>
+    <el-col :style="{ width: width }">
+      <div ref="chartRef" :style="{ width: width, height: '600px' }" />
     </el-col>
   </el-row>
 </template>
-<script>
-import { mapActions } from 'vuex'
-import echarts from 'echarts'
 
-export default {
-  name: 'TeacherCourseCountReport',
-  components: { },
-  props: {
-    startDate: String,
-    endDate: String
-  },
-  data () {
-    return {
-      data: [],
-      teacherData: [],
-      courseCountData: [],
-      width: '600px'
-    }
-  },
-  methods: {
-    ...mapActions(['GetReportTeacherCount']),
-    search () {
-      this.GetReportTeacherCount({
-        startDate: this.startDate,
-        endDate: this.endDate
-      }).then((res) => {
-        if (res) {
-          this.data = res
-          this.teacherData = []
-          this.courseCountData = []
-          for (let i = 0; i < this.data.length; i++) {
-            if (i < 10) {
-              const item = this.data[i]
-              this.teacherData.push(item.name)
-              this.courseCountData.push(item.count)
-            }
-          }
-          this.teacherData.reverse()
-          this.courseCountData.reverse()
-          this.draw()
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import * as echarts from 'echarts'
+import { useReportStore } from '@/stores/report'
+
+const props = defineProps<{ startDate: string; endDate: string }>()
+
+const reportStore = useReportStore()
+const data = ref<any[]>([])
+const teacherData = ref<string[]>([])
+const countData = ref<number[]>([])
+const colorData = ref<string[]>([])
+const width = ref('600px')
+const chartRef = ref<HTMLDivElement>()
+
+const search = () => {
+  reportStore.getReportTeacherCount({
+    startDate: props.startDate,
+    endDate: props.endDate
+  }).then((res: any) => {
+    if (res) {
+      data.value = res
+      teacherData.value = []
+      countData.value = []
+      colorData.value = []
+      for (let i = 0; i < data.value.length; i++) {
+        if (i < 10) {
+          const item = data.value[i]
+          teacherData.value.push(item.name)
+          countData.value.push(item.count)
+          colorData.value.push(item.color)
         }
-      }).catch(() => {
-      })
-    },
-    draw () {
-      const chart = echarts.init(document.getElementById('teacherCourseCountChart'))
-      chart.setOption({
-        title: {
-          text: 'Top10'
-        },
-        grid: {
-          left: '15%'
-        },
-        xAxis: {
-          type: 'value',
-          minInterval: 1
-        },
-        yAxis: {
-          type: 'category',
-          data: this.teacherData
-        },
-        series: [
-          {
-            type: 'bar',
-            data: this.courseCountData,
-            label: {
-              show: true
-            },
-            itemStyle: {
-              color: '#409EFF'
-            }
-          }
-        ]
-      })
+      }
+      teacherData.value.reverse()
+      countData.value.reverse()
+      colorData.value.reverse()
+      draw()
     }
-  },
-  watch: {
-    startDate (val) {
-      this.search()
-    }
-  }
+  }).catch(() => {})
 }
+
+const draw = () => {
+  if (!chartRef.value) return
+  const chart = echarts.init(chartRef.value)
+  chart.setOption({
+    title: { text: 'Top10' },
+    grid: { left: '15%' },
+    xAxis: { type: 'value', minInterval: 1 },
+    yAxis: { type: 'category', data: teacherData.value },
+    series: [{
+      type: 'bar',
+      data: countData.value,
+      label: { show: true },
+      itemStyle: {
+        color: (params: any) => colorData.value[params.dataIndex] || '#409EFF'
+      }
+    }]
+  })
+}
+
+watch(() => props.startDate, () => search())
+
+defineExpose({ search })
 </script>
-
-<style scoped>
-
-</style>

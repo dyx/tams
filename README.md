@@ -21,13 +21,13 @@
 
 ## 技术栈
 ### 前端
-- vue 2.6
-- vue-router 3.4
-- vuex 3.5
-- axios 0.19
-- element-ui 2.13
-- fullcalendar 5.3
-- echarts 4.8
+- vue 3.5
+- vue-router 4.6
+- pinia 3.0
+- axios 1.13
+- element-plus 2.13
+- fullcalendar 6.1
+- echarts 6.0
 
 ### 后端
 - SpringBoot 3.0
